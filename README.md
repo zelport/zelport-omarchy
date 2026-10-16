@@ -134,6 +134,22 @@ An optional gateway user service is independently managed by its owner.
 
 ## Development checks
 
+For desktop development, keep a separate checkout at
+`~/src/zelport-omarchy-dev` and link
+`~/.config/omarchy/plugins/zelport.integration` to it. Before replacing an
+existing installation, move it outside the plugin discovery directory, for
+example into `~/.local/share/zelport/plugin-backups/`. Preserve presentation
+preferences, keyboard bindings and the existing bar widget placement.
+
+Update the development checkout directly, run `omarchy plugin validate
+~/src/zelport-omarchy-dev`, then `omarchy restart shell` to reload service code.
+No gateway restart or release upgrade is needed. The panel header displays the
+manifest version. Development builds use a `-dev` suffix. Do not run the normal
+plugin updater against a checkout with unpublished edits.
+
+To roll back, remove only the plugin symlink, restore the backed-up directory
+at the original plugin path, and restart the shell.
+
 ```sh
 python3 -m unittest discover -s tests -v
 node --test tests/model.test.cjs

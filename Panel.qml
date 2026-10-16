@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Effects
-import QtQuick.Controls as Controls
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
@@ -11,6 +10,7 @@ import "Model.js" as Model
 Item {
     id: root
     property var shell: null
+    property var manifest: null
     property bool opened: false
     property string selectedId: ""
     property var service: shell ? shell.serviceFor('zelport.integration') : null
@@ -50,8 +50,11 @@ Item {
         font.family:Style.font.menuFamily
         font.pixelSize:Style.font.body
         HoverHandler { id:cellHover }
-        Controls.ToolTip.visible: truncated && cellHover.hovered
-        Controls.ToolTip.text: text
+        PanelToolTip {
+            visible: cell.truncated && cellHover.hovered
+            text: cell.text
+            fontFamily: Style.font.menuFamily
+        }
     }
     ListModel { id: display }
     PanelWindow {
@@ -92,10 +95,41 @@ Item {
                     }
                     Text {
                         id:headerText
-                        width:Math.max(0,parent.width-headerIcon.width-parent.spacing)
+                        width:Math.max(0,parent.width-headerVersion.width-headerIcon.width-parent.spacing*2)
                         text:'Zelport Integration for Omarchy'
                         textFormat:Text.PlainText; wrapMode:Text.Wrap
                         color:Color.menu.text; font.family:Style.font.menuFamily; font.pixelSize:Style.font.title
+                    }
+                    Text {
+                        id:headerVersion
+                        anchors.verticalCenter:headerText.verticalCenter
+                        text:root.manifest && root.manifest.version ? 'v' + root.manifest.version : ''
+                        textFormat:Text.PlainText
+                        color:Color.menu.text
+                        opacity:versionLink.containsMouse || activeFocus ? 1 : 0.65
+                        font.family:Style.font.menuFamily
+                        font.pixelSize:Style.font.caption
+                        font.underline:versionLink.containsMouse || activeFocus
+                        activeFocusOnTab:false
+                        Accessible.role:Accessible.Link
+                        Accessible.name:'Source on GitHub, ' + text
+                        function openRepository() { Qt.openUrlExternally('https://github.com/zelport/zelport-omarchy') }
+                        Accessible.onPressAction:openRepository()
+                        Keys.onReturnPressed:openRepository()
+                        Keys.onEnterPressed:openRepository()
+                        Keys.onSpacePressed:openRepository()
+                        PanelToolTip {
+                            visible:versionLink.containsMouse || headerVersion.activeFocus
+                            text:'Source on GitHub'
+                            fontFamily:Style.font.menuFamily
+                        }
+                        MouseArea {
+                            id:versionLink
+                            anchors.fill:parent
+                            hoverEnabled:true
+                            cursorShape:Qt.PointingHandCursor
+                            onClicked:headerVersion.openRepository()
+                        }
                     }
                 }
                 Text {
@@ -115,6 +149,7 @@ Item {
                         anchors.fill:parent; anchors.margins:Style.space(10)
                         color:Color.menu.text; selectionColor:Color.menu.selectedBackground; selectedTextColor:Color.menu.selectedText
                         font.family:Style.font.menuFamily; font.pixelSize:Style.font.body
+                        verticalAlignment:TextInput.AlignVCenter
                         clip:true; selectByMouse:true
                         onTextChanged:root.rebuild()
                         Keys.onDownPressed:root.move(1)
@@ -122,7 +157,16 @@ Item {
                         Keys.onReturnPressed:root.launch()
                         Keys.onEnterPressed:root.launch()
                         Keys.onEscapePressed:root.close()
-                        Text { visible:!search.text; text:'Search services'; textFormat:Text.PlainText; color:Color.menu.text; opacity:0.6; font:search.font }
+                        Text {
+                            anchors.fill:parent
+                            verticalAlignment:Text.AlignVCenter
+                            visible:!search.text
+                            text:'Search services'
+                            textFormat:Text.PlainText
+                            color:Color.menu.text
+                            opacity:0.6
+                            font:search.font
+                        }
                     }
                 }
                 Row {
@@ -156,17 +200,21 @@ Item {
                     clip:true
                     model:display
                     spacing:0
-                    delegate:Rectangle {
+                    delegate:Item {
                         required property int index
                         required property var model
                         id:serviceRow
                         width:list.width
                         height:list.compact ? compactContent.implicitHeight+Style.space(12) : Math.max(Style.space(30),tableContent.implicitHeight+Style.space(8))
                         readonly property color ink: index===list.currentIndex ? Color.menu.selectedText : Color.menu.text
-                        color:ListView.isCurrentItem ? Color.menu.selectedBackground : 'transparent'
-                        radius:Style.cornerRadius
-                        border.width:list.activeFocus && index===list.currentIndex ? Math.max(1,Style.space(1)) : 0
-                        border.color:serviceRow.ink
+                        Rectangle {
+                            anchors.fill:parent
+                            anchors.margins:Math.max(1,Style.space(1))
+                            color:serviceRow.ListView.isCurrentItem ? Color.menu.selectedBackground : 'transparent'
+                            radius:Style.cornerRadius
+                            border.width:list.activeFocus && serviceRow.index===list.currentIndex ? Math.max(1,Style.space(1)) : 0
+                            border.color:serviceRow.ink
+                        }
                         Row {
                             id:tableContent
                             visible:!list.compact
@@ -197,10 +245,10 @@ Item {
                 Item {
                     id:bottomBar
                     width:parent.width
-                    height:Math.max(actions.implicitHeight,footer.implicitHeight)
+                    height:actions.implicitHeight
                     Flow {
                         id:actions
-                        width:Math.max(0,parent.width-footer.width-Style.space(12))
+                        width:parent.width
                         anchors.left:parent.left
                         anchors.verticalCenter:parent.verticalCenter
                         spacing:Style.space(12)
@@ -208,20 +256,7 @@ Item {
                         Button { text:'Refresh'; foreground:Color.menu.text; enabled:root.service && !root.service.busy; focusable:true; onClicked:root.service.refresh() }
                         Button { text:'Close'; foreground:Color.menu.text; focusable:true; onClicked:root.close() }
                     }
-                    Button {
-                        id:footer
-                        anchors.right:parent.right
-                        anchors.verticalCenter:parent.verticalCenter
-                        text:list.compact ? '' : 'zelport/zelport-omarchy'
-                        iconText:'\uf09b'
-                        iconSize:Style.font.caption
-                        tooltipText:'https://github.com/zelport/zelport-omarchy'
-                        foreground:Color.menu.text
-                        fontFamily:Style.font.menuFamily; fontSize:Style.font.caption
-                        verticalPadding:Style.space(2)
-                        focusable:true
-                        onClicked:Qt.openUrlExternally('https://github.com/zelport/zelport-omarchy')
-                    }
+
                 }
             }
         }
