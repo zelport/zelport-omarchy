@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "services": {
+    "source_types": [],
+    "sort_by": "domain"
+  },
+  "panel": {
+    "remember_selection": true,
+    "clear_search_on_open": true
+  }
+}

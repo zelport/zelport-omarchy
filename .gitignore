@@ -1,0 +1,11 @@
+/bin/
+__pycache__/
+*.pyc
+
+# Local design drafts and generated artifacts are not distributed.
+/design/
+/docs/plans/
+/docs/superpowers/
+/docs/INITIAL_DESIGN.md
+/INTENT.md
+.DS_Store

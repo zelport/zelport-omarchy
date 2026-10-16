@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "zelport.integration",
+  "name": "Zelport Integration",
+  "version": "0.1.2",
+  "author": "Zelport",
+  "description": "Unofficial Zelport integration for Omarchy.",
+  "kinds": [
+    "service",
+    "bar-widget",
+    "panel"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "service": "Service.qml",
+    "barWidget": "Widget.qml",
+    "panel": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Zelport Integration",
+    "description": "Zelport service availability",
+    "category": "Network",
+    "allowMultiple": false,
+    "defaultSection": "right"
+  }
+}
