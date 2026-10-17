@@ -57,7 +57,7 @@ test('data flow updates one existing row without replacing unchanged rows', () =
   assert.equal(list.get(0).data_flow,'Aux port 3001');
   assert.equal(model.selection(list.rows,'b'),1);
 });
-test('gateway availability does not depend on relay modules or their connection state', () => {
+test('Zelport App availability does not depend on relay connection state', () => {
   for (const connections of [[], [{id:'ports_over_relay',label:'Ports over Relay',state:'disconnected'}], [{id:'relay',label:'Built-in Relay',state:'stopped'}]]) {
     const state = model.receive(model.initial(), {ok:true,state:{services:[],connections,admin_url:'http://localhost:8080'}});
     assert.equal(state.ready,true);
@@ -65,10 +65,9 @@ test('gateway availability does not depend on relay modules or their connection 
     assert.equal(model.receive(state,{ok:false,error:'unavailable'}).ready,false);
   }
 });
-test('unsupported routes cannot open while the gateway remains available', () => {
-  const state = {ready:true,admin_url:'http://localhost:8080',services:[{url:'http://missing.localhost:8080',state:'unsupported'},{url:'http://active.localhost:8080',state:'configured'}]};
-  assert.equal(model.canOpen(state,state.services[0].url),false);
-  assert.equal(model.canOpen(state,state.services[1].url),true);
+test('validated service routes can open only while Zelport App is available', () => {
+  const state = {ready:true,admin_url:'http://localhost:8080',services:[{url:'http://active.localhost:8080',state:'configured'}]};
+  assert.equal(model.canOpen(state,state.services[0].url),true);
   assert.equal(model.canOpen(state,state.admin_url),true);
   assert.equal(model.canOpen({...state,ready:false},state.admin_url),false);
   assert.equal(model.canOpen(state,'https://elsewhere.invalid'),false);

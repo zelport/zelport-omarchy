@@ -238,7 +238,7 @@ Item {
                             TableCell { width:parent.width; text:model.source_name+' · '+model.state; color:serviceRow.ink; font.pixelSize:Style.font.caption }
                             TableCell { width:parent.width; text:model.data_flow || '—'; color:serviceRow.ink; font.pixelSize:Style.font.caption }
                         }
-                        MouseArea { anchors.fill:parent; enabled:root.service && root.service.snapshot.ready && model.state!=='unsupported'; onClicked:{ list.currentIndex=index; root.selectedId=display.get(index).id; root.launch() } }
+                        MouseArea { anchors.fill:parent; enabled:root.service && root.service.snapshot.ready; onClicked:{ list.currentIndex=index; root.selectedId=display.get(index).id; root.launch() } }
                     }
                     Text { anchors.centerIn:parent; visible:display.count===0; text:'No matching services'; textFormat:Text.PlainText; color:Color.menu.text; font.family:Style.font.menuFamily }
                 }

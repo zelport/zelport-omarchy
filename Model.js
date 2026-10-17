@@ -36,7 +36,7 @@ function message(state) {
 }
 
 function canOpen(state, url) {
-  return state.ready && (url === state.admin_url || state.services.some(function(row) { return row.url === url && row.state !== 'unsupported'; }));
+  return state.ready && (url === state.admin_url || state.services.some(function(row) { return row.url === url; }));
 }
 
 function visibleServices(rows, query, options) {

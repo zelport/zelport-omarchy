@@ -1,63 +1,71 @@
 # Publishing Zelport Integration for Omarchy
 
-Status: GitHub preview distribution. The plugin is not submitted to the catalog.
+Zelport Integration releases independently from Zelport App. The integration
+never downloads, installs, starts, stops, or updates the App. Python 3 and the
+standard Omarchy shell and bar are required. Native acceptance targets Omarchy
+4.0.4-1; do not claim wider compatibility without testing. The supported local
+integration API is v1.
 
-The gateway and plugin have independent releases. The plugin never downloads,
-installs, starts or updates a gateway implicitly. It discovers a running gateway
-through its automatic local API. Python 3 and the standard Omarchy shell/bar are
-required. Native testing targets Omarchy 4.0.4-1; do not claim wider compatibility
-without testing. The supported desktop API is v1.
+## Release identity
 
-## Catalog metadata
-
-- Repository: https://github.com/zelport/zelport-omarchy
+- Repository: `https://github.com/zelport/zelport-omarchy`
 - Name: Zelport Integration
 - ID: `zelport.integration`
+- Manifest version: `0.10.0`
+- Git tag and GitHub release: `v0.10.0`
 - Author: Zelport
 - Description: Unofficial Zelport integration for Omarchy.
-- Suggested category: Network (choose the matching category offered by the form).
-- Suggested tags: zelport, localhost, services, development, networking.
-- License: MIT; see the root LICENSE.
+- Suggested category: Network
+- Suggested tags: zelport, localhost, services, development, networking
+- License: MIT
 
-The manifest at the repository root is authoritative for the plugin version,
-entry points and bar widget metadata. Keep that layout in the published repository.
-A prepared archive is an alternative for manual preview installation; it is not
-itself a Git repository accepted by `omarchy plugin add`.
+The root manifest is authoritative for the integration version, entry points,
+and bar widget metadata. A prepared archive is an alternative for manual
+installation; it is not itself a Git repository accepted by
+`omarchy plugin add`.
 
-## Release checklist
+## Reproducible release procedure
 
-- Publish a standalone repository with runtime files, root manifest, README,
-  LICENSE, assets, tests and documentation. Exclude `bin/`, Python caches and
-  historical design drafts; review the complete Git tree before publishing.
-- Review third-party asset attribution. Take an optional preview screenshot on
-  Omarchy with synthetic services and no private domains or endpoints.
-- Set the intended version in manifest.json and tag that exact revision.
-- Run `python3 -m unittest discover -s tests` and `node --test tests/model.test.cjs`.
-- Run `omarchy plugin validate .` on the supported Omarchy version. Complete
-  [native acceptance](../NATIVE_ACCEPTANCE.md), including keyboard navigation,
-  endpoint changes, config changes and unavailable gateways.
-- Run `python3 scripts/bundle.py`; the archive includes LICENSE and a SHA-256 file.
-- Verify installation, upgrade and removal on a clean test account. Preserve
-  `~/.config/zelport/omarchy.json`, gateway config and existing shortcuts.
-- Submit the repository URL, category and tags through the
-  [catalog publishing form](https://plugins.omarchy.org/publish.html).
-  Listing approval is separate from manifest validation. Do not describe the
-  plugin as an official Omarchy project or imply listing validates its security.
+1. Publish and verify Zelport App `v0.10.0` first.
+2. Confirm the working tree contains the reviewed runtime files, root manifest,
+   README, LICENSE, assets, tests, and current documentation. Exclude `bin/`,
+   Python caches, captured results, and historical design material.
+3. Confirm `manifest.json` contains `0.10.0` and the release commit will receive
+   tag `v0.10.0`.
+4. Run `python3 -m unittest discover -s tests -v`.
+5. Run `node --test tests/model.test.cjs` in an isolated Node.js environment.
+6. Run `omarchy plugin validate .` and complete
+   [native acceptance](../NATIVE_ACCEPTANCE.md) on Omarchy 4.0.4-1 with Zelport
+   App and Integration `0.10.0`. Exercise only clean schema-v1 configuration.
+7. Run `python3 scripts/bundle.py` twice and require identical archive SHA-256
+   values. Inspect the archive allowlist and checksum manifest.
+8. Verify installation, update, and removal on a clean test account. Preserve
+   `~/.config/zelport/omarchy.json`, Zelport App configuration, and existing
+   shortcuts.
+9. Tag the exact verified commit as `v0.10.0`, create the GitHub release, and
+   attach the exact verified `zelport-omarchy.tar.gz` plus its checksum file.
+
+Executed results belong to release verification and are not stored as a
+completed checklist in this repository. Any screenshot must use synthetic data
+and contain no private domains, endpoints, or settings.
+
+## Catalog submission
+
+Catalog submission is a separate external action and requires explicit approval.
+Submit the repository URL, category, and tags through the catalog publishing
+form only after the GitHub release is verified. Listing approval does not make
+the integration an official Omarchy project and does not validate its security.
 
 ## Installation from GitHub
 
-Install Zelport 0.1.0-preview.5 or newer through its Arch package and enable its user service first;
-see the gateway's `contrib/distribution/README.md`. Then:
+Install and start Zelport App `0.10.0`, then add the integration:
 
 ```sh
 omarchy plugin add https://github.com/zelport/zelport-omarchy.git --enable
 ```
 
-The manifest defaults the widget to the right bar section. Follow placement prompts
-and choose the standard bar. No global shortcut is installed automatically. The
-optional Super + Alt + Z binding and JSON configuration are documented in README.
-When absent, the config file uses auto-discovery defaults; users can copy
-`config.example.json` to `~/.config/zelport/omarchy.json` before editing.
-
-Use Omarchy's supported plugin update/remove workflow. Removing this plugin must
-not stop Zelport, remove its package or delete either configuration file.
+The manifest defaults the widget to the right bar section. No global shortcut is
+installed automatically. The optional Super + Alt + Z binding and the
+Zelport Integration configuration are documented in the root README. Removing
+the integration must not stop Zelport App, remove its package, or delete either
+configuration file.

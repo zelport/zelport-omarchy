@@ -6,7 +6,7 @@ import io
 from pathlib import Path
 import tarfile
 
-REQUIRED = ('docs/distribution/PUBLISHING.md', 'LICENSE', 'config.example.json', 'docs/CONFIGURATION.md', 'manifest.json', 'Service.qml', 'Widget.qml', 'Panel.qml', 'Model.js', 'helper.py', 'README.md', 'docs/NATIVE_ACCEPTANCE.md', 'docs/GATEWAY_SETUP.md', 'docs/zelport.service.example')
+REQUIRED = ('docs/distribution/PUBLISHING.md', 'LICENSE', 'config.example.json', 'docs/CONFIGURATION.md', 'manifest.json', 'Service.qml', 'Widget.qml', 'Panel.qml', 'Model.js', 'helper.py', 'README.md', 'docs/NATIVE_ACCEPTANCE.md', 'docs/ZELPORT_SETUP.md', 'docs/zelport.service.example')
 
 
 def archive(root):

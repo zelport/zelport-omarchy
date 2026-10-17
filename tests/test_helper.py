@@ -13,7 +13,7 @@ if h: spec.loader.exec_module(h)
 
 
 def state(port=8080):
-    return dict(api_version=1, capabilities=['services', 'relay_status'], product='zelport', version='dev', admin_url=f'http://localhost:{port}/', services=[dict(id='one', domain='demo.localhost', source_id='local', source_name='Local', state='configured', url=f'http://demo.localhost:{port}/')], connections=[])
+    return dict(api_version=1, capabilities=['services', 'relay_status'], product='zelport', version='0.0.0', admin_url=f'http://localhost:{port}/', services=[dict(id='one', domain='demo.localhost', source_id='local', source_name='Local', state='configured', url=f'http://demo.localhost:{port}/')], connections=[])
 
 
 class ContractTests(unittest.TestCase):
@@ -39,7 +39,7 @@ class ContractTests(unittest.TestCase):
             with self.subTest(flow=repr(flow)[:30]), self.assertRaises(h.Failure):
                 h.validate_state(data, 8080)
 
-    def test_absent_or_disconnected_relay_is_a_valid_gateway_response(self):
+    def test_absent_or_disconnected_relay_is_a_valid_integration_response(self):
         for connections in [[], [dict(id='ports_over_relay', label='Ports over Relay', state='disconnected')], [dict(id='relay', label='Built-in Relay', state='stopped')]]:
             data = state()
             data['connections'] = connections

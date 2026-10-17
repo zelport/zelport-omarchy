@@ -8,12 +8,12 @@ from test_helper import h
 
 class ConfigTests(unittest.TestCase):
     def test_defaults_precedence_and_live_reload(self):
-        with tempfile.TemporaryDirectory() as d, patch.dict(os.environ, {'XDG_CONFIG_HOME':d,'ZELPORT_INTEGRATION_PORT':'8070'}, clear=True):
-            self.assertNotIn('gateway',h.load_config())
+        with tempfile.TemporaryDirectory() as d, patch.dict(os.environ, {'XDG_CONFIG_HOME':d}, clear=True):
+            self.assertEqual(h.load_config(), h.validate_config({'version':1}))
             p=Path(d)/'zelport/omarchy.json';p.parent.mkdir();p.write_text('{"version":1}')
-            self.assertNotIn('gateway',h.load_config())
-            p.write_text('{"version":1,"gateway":{"port":9090}}')
-            self.assertNotIn('gateway',h.load_config())
+            self.assertEqual(h.load_config(), h.validate_config({'version':1}))
+            p.write_text('{"version":1,"application":{"port":9090}}')
+            with self.assertRaisesRegex(h.Failure,'invalid_config'):h.load_config()
             p.write_text('{')
             with self.assertRaisesRegex(h.Failure,'invalid_config'):h.load_config()
     def test_strict_config(self):

@@ -1,39 +1,47 @@
-# Omarchy 4.0.4-1 native acceptance
+# Native acceptance — Omarchy 4.0.4-1
 
-Run these checks on the target Linux desktop. A macOS unit-test or cross-build
-result does not count as QML/runtime acceptance. Use temporary gateway configuration
-and a controlled test HTTP service for route mutation checks.
+Run this mandatory release checklist on the target Linux desktop with Zelport App
+and Zelport Integration `0.10.0`. A macOS unit-test or cross-build result does
+not count as QML/runtime acceptance. Use temporary schema-v1 configuration and
+synthetic services for route mutation checks.
 
-- [ ] `omarchy-version` reports the intended 4.0.4 series; `omarchy-shell shell ping`
-  succeeds; the standard `omarchy.bar` is active.
-- [ ] `omarchy plugin validate ~/.config/omarchy/plugins/zelport.integration` succeeds.
-- [ ] Enabling loads one widget and one service without QML warnings in shell logs.
-- [ ] With no running gateway, the widget has an unavailable state and
-  the panel gives setup guidance without launching another gateway.
-- [ ] Start Zelport normally with the chosen port and no XDG_RUNTIME_DIR. Verify
-  endpoint.json under XDG_STATE_HOME records that port with mode 0600.
-- [ ] Widget becomes available. Services match Dashboard, including stale states.
-  Relay connectivity is labeled separately from service/application health.
-- [ ] Pointer click and `omarchy-shell shell toggle zelport.integration '{}'` open
-  the same panel. Search focuses immediately. Up/Down, Enter and Escape work.
-- [ ] Search matches domain and source label; Enter opens only the selected
-  `.localhost` service at the configured port. Administration opens exact localhost.
-- [ ] Unchanged polls preserve selection, search, scroll and delegates. A real
-  addition/removal updates the list and retains the selected stable ID if present.
-- [ ] Restart gateway: stale entries remain visible but cannot launch; reconnect
-  rereads the endpoint hint and resumes automatically.
-- [ ] A malformed response or incompatible API gives
-  a concise message without a raw exception, private settings.
-- [ ] Dark/light theme changes update widget/panel colors. Narrow display and
-  vertical bar placement remain usable. Unsupported replacement bars explain the
-  missing service capability.
-- [ ] Remove/disable/reload plugin: gateway PID, configuration and service traffic
-  remain unchanged. Plugin leaves no background helper running.
-- [ ] Stop gateway cleanly: endpoint.json remains, but the widget becomes unavailable.
-- [ ] Remove or corrupt the hint and verify fallback to 8080. A failed nondefault
-  port falls back once to 8080, never scanning other ports.
+- [ ] `omarchy-version` reports the intended 4.0.4 series,
+  `omarchy-shell shell ping` succeeds, and the standard `omarchy.bar` is active.
+- [ ] `omarchy plugin validate ~/.config/omarchy/plugins/zelport.integration`
+  succeeds.
+- [ ] Enabling loads one widget and one service without QML warnings in shell
+  logs.
+- [ ] With no running Zelport App, the widget has an unavailable state and the
+  panel gives setup guidance without starting the App.
+- [ ] Start Zelport App normally with the chosen port and no `XDG_RUNTIME_DIR`.
+  Verify `endpoint.json` under `XDG_STATE_HOME` records that port with mode 0600.
+- [ ] The widget becomes available and services match Dashboard, including stale
+  states. Relay connectivity is labeled separately from service health.
+- [ ] Pointer click and `omarchy-shell shell toggle zelport.integration '{}'`
+  open the same panel. Search focuses immediately. Up/Down, Enter, and Escape
+  work.
+- [ ] Search matches domain and source label. Enter opens only the selected
+  `.localhost` service at the configured port. Administration opens exact
+  localhost.
+- [ ] Unchanged polls preserve selection, search, scroll, and delegates. A real
+  addition or removal updates the list and retains the selected stable ID when
+  present.
+- [ ] Restart Zelport App. Stale entries remain visible but cannot launch;
+  reconnect rereads the endpoint hint and resumes automatically.
+- [ ] A malformed response or incompatible API produces a concise message
+  without a raw exception or private settings.
+- [ ] Dark and light theme changes update widget and panel colors. Narrow display
+  and vertical bar placement remain usable. Replacement bars explain a missing
+  service capability.
+- [ ] Remove, disable, and reload the integration. The Zelport App PID,
+  configuration, and service traffic remain unchanged, and no helper process is
+  left running.
+- [ ] Stop Zelport App cleanly. `endpoint.json` remains, while the widget becomes
+  unavailable.
+- [ ] Remove or corrupt the hint and verify selection of port 8080. A failed
+  nondefault port produces one attempt on 8080 and no scan of other ports.
 - [ ] A different application returning HTTP 200 is rejected as incompatible.
 
-Record Omarchy version, gateway build version, plugin version, results and any
-shell errors with secrets removed. Do not mark the whole checklist passed from
-manifest validation alone.
+Record Omarchy, Zelport App, and Zelport Integration versions, each result, and
+sanitized shell errors in release verification. Do not mark this checklist passed
+from manifest validation alone.

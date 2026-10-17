@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import pathlib
 import tempfile
 import unittest
@@ -14,9 +15,37 @@ class BundleTests(unittest.TestCase):
         (root / 'assets').mkdir()
         (root / 'assets' / 'symbol.svg').write_text('<svg/>')
         (root / 'docs').mkdir()
-        for name in ('distribution/PUBLISHING.md', 'CONFIGURATION.md', 'NATIVE_ACCEPTANCE.md', 'GATEWAY_SETUP.md', 'zelport.service.example'):
+        for name in ('distribution/PUBLISHING.md', 'CONFIGURATION.md', 'NATIVE_ACCEPTANCE.md', 'ZELPORT_SETUP.md', 'zelport.service.example'):
             (root / 'docs' / name).parent.mkdir(parents=True, exist_ok=True)
             (root / 'docs' / name).write_text('Documentation')
+
+    def test_release_metadata_and_current_document_names(self):
+        root = pathlib.Path(__file__).resolve().parents[1]
+        manifest = json.loads((root / 'manifest.json').read_text())
+        self.assertEqual(manifest['version'], '0.10.0')
+        self.assertIn('docs/ZELPORT_SETUP.md', bundle.REQUIRED)
+        old_setup = 'docs/' + ''.join(('GATE', 'WAY')) + '_SETUP.md'
+        self.assertNotIn(old_setup, bundle.REQUIRED)
+
+    def test_active_product_text_has_no_retired_variants(self):
+        root = pathlib.Path(__file__).resolve().parents[1]
+        retired = (''.join(('gate', 'way')), ''.join(('pre', 'view')))
+        paths = [root / 'README.md', root / 'helper.py', root / 'Model.js',
+                 root / 'Panel.qml', root / 'Service.qml', root / 'Widget.qml',
+                 root / 'docs' / 'CONFIGURATION.md', root / 'docs' / 'NATIVE_ACCEPTANCE.md',
+                 root / 'docs' / 'ZELPORT_SETUP.md', root / 'docs' / 'distribution' / 'PUBLISHING.md',
+                 root / 'docs' / 'zelport.service.example']
+        for path in paths:
+            text = path.read_text().lower()
+            for token in retired:
+                with self.subTest(path=path.relative_to(root), token=token):
+                    self.assertNotIn(token, text)
+        missing_variant = ''.join(('un', 'supported'))
+        for path in (root / 'README.md', root / 'docs' / 'ZELPORT_SETUP.md'):
+            self.assertNotIn(missing_variant, path.read_text().lower())
+        state_branch = "row.state !== '" + missing_variant + "'"
+        self.assertNotIn(state_branch, (root / 'Model.js').read_text())
+        self.assertNotIn("model.state!=='" + missing_variant + "'", (root / 'Panel.qml').read_text())
 
     def test_only_runtime_and_documentation_are_packed_deterministically(self):
         with tempfile.TemporaryDirectory() as td:

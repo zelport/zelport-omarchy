@@ -9,7 +9,7 @@ BarWidget {
     readonly property var shell: bar ? bar.shell : null
     moduleName: "zelport.integration"
     readonly property var service: shell ? shell.serviceFor(moduleName) : null
-    readonly property string status: service ? service.status + (service.connectionsText ? '\n' + service.connectionsText : '') : 'Zelport Integration unsupported: use the standard Omarchy bar'
+    readonly property string status: service ? service.status + (service.connectionsText ? '\n' + service.connectionsText : '') : 'Zelport Integration requires the standard Omarchy bar'
     readonly property color foreground: bar ? bar.barForeground : Color.menu.text
     readonly property bool ready: !!service && service.snapshot.ready
     implicitWidth: vertical ? barSize : Style.bar.iconSlot

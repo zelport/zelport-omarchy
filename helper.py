@@ -23,8 +23,6 @@ def validate_config(data):
     defaults = {'version': 1,
                 'services': {'source_types': [], 'sort_by': 'domain'},
                 'panel': {'remember_selection': True, 'clear_search_on_open': True}}
-    # Ignore the retired gateway selector in existing plugin configuration.
-    if isinstance(data, dict): data = {k: v for k, v in data.items() if k != 'gateway'}
     if not isinstance(data, dict) or type(data.get('version')) is not int or data['version'] != 1 or set(data) - set(defaults):
         raise Failure('invalid_config')
     for section in ('services', 'panel'):

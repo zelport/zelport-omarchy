@@ -1,61 +1,42 @@
 # Zelport Integration
 
-Zelport Integration is an independent community project and is not affiliated with or endorsed
-by Omarchy.
+Zelport Integration is an independent community project and is not affiliated
+with or endorsed by Omarchy. Version `0.10.0` targets Omarchy **4.0.4-1**
+(upstream shell tag `v4.0.4`), Linux x86_64, Python 3.9+, and Zelport App
+`0.10.0`.
 
-Zelport Integration connects the standard Omarchy bar and a keyboard search panel to an
-existing Zelport gateway. It never starts, stops, installs, or configures Zelport.
-Target: Omarchy **4.0.4-1** (upstream shell tag v4.0.4), Linux x86_64, Python 3.9+
-and Zelport 0.1.0-preview.5 or newer with the automatic local integration API.
-This is a preview. Full visual and interaction acceptance remains pending;
-see [the acceptance checklist](docs/NATIVE_ACCEPTANCE.md).
+The integration connects the standard Omarchy bar and a keyboard search panel
+to a running Zelport App through its read-only local integration API. It never
+installs, starts, stops, updates, or configures Zelport App.
 
-## Gateway installed with the Arch package
+## Requirements
 
-The current Arch unit runs Zelport as the logged-in user. No integration flag is
-needed. Older preview gateways and plugins must be upgraded together. See
-[the API and migration guide](docs/GATEWAY_SETUP.md).
+Install Zelport App `0.10.0` and start it as the logged-in user. The Arch package
+provides a user service:
 
 ```sh
 systemctl --user status zelport.service
 ```
 
-## Install from GitHub
+No integration flag or additional listener is required. See
+[Zelport setup](docs/ZELPORT_SETUP.md) for the API and lifecycle boundary.
 
-Install the preview from GitHub:
+## Install from GitHub
 
 ```sh
 omarchy plugin add https://github.com/zelport/zelport-omarchy.git --enable
 ```
 
-If a hand-installed `zelport.integration` already exists, back up its directory
+If a hand-installed `zelport.integration` directory already exists, back it up
 before replacing it and follow Omarchy's plugin management prompts. Preserve
 `~/.config/zelport/omarchy.json` and existing keyboard bindings. Do not create a
-second bar widget if Zelport Integration is already present.
+second bar widget when Zelport Integration is already present.
 
-## Manually managed gateway
-
-Start the gateway with its existing port and configuration. The plugin never
-starts a second gateway. Python uses only its standard library.
-
-The plugin reads the last-used port from `$XDG_STATE_HOME/zelport/endpoint.json`
-or `~/.local/state/zelport/endpoint.json`. A missing or invalid hint defaults to
-8080. A failed nondefault endpoint also falls back to 8080. Responses must match
-the local integration API contract before the widget becomes available.
-There is no token, port scan, process scan, instance selector or runtime-directory
-dependency. Presentation preferences remain in
-[`~/.config/zelport/omarchy.json`](docs/CONFIGURATION.md).
-
-## Hand-install the local preview
-
-Omarchy v4.0.4's `omarchy plugin add` accepts Git URLs, not local archives.
-For an offline preview installation, use the following manual lifecycle. Extract
-the prepared source bundle into a temporary directory and inspect it first. Copy
-the plugin directory to `~/.config/omarchy/plugins/zelport.integration/` so that
-`manifest.json` is directly inside that directory. If an earlier copy exists,
-back it up before replacing it; do not merge stale runtime files into an update.
-
-From that installed directory run:
+Omarchy `v4.0.4` accepts Git URLs rather than local archives. For an offline
+installation, inspect and extract the prepared source bundle, then copy its
+`zelport.integration` directory to
+`~/.config/omarchy/plugins/zelport.integration/`. `manifest.json` must be
+directly inside that directory. Validate and enable the installed copy:
 
 ```sh
 omarchy plugin validate .
@@ -63,91 +44,82 @@ omarchy-shell shell rescanPlugins
 omarchy plugin enable zelport.integration
 ```
 
-Use Omarchy's bar configuration to add the **Zelport Integration** widget to the standard bar.
-Do not modify Omarchy's built-in QML files. The monochrome logo uses full opacity
-when the gateway is available and 45% opacity otherwise, without additional badges.
-An explicit unsupported tooltip explains replacement bars that withhold services.
-
-The panel can be opened without the widget:
+Use Omarchy's bar configuration to add the **Zelport Integration** widget to the
+standard bar. The panel can also be opened directly:
 
 ```sh
 omarchy-shell shell toggle zelport.integration '{}'
 ```
 
-The optional shortcut **Super + Alt + Z** toggles Zelport Integration. Check for conflicts
-before adding this to `~/.config/hypr/bindings.lua` on Omarchy with Lua configuration:
+The optional **Super + Alt + Z** shortcut can be added to
+`~/.config/hypr/bindings.lua` on Omarchy installations that use Lua
+configuration:
 
 ```lua
 o.bind("SUPER + ALT + Z", "Zelport Integration", "omarchy-shell shell toggle zelport.integration '{}'")
 ```
 
-Reload Hyprland configuration after saving. Opening the panel focuses search.
-Installing Zelport Integration does not change keyboard configuration. This shortcut is a
-project choice, not an Omarchy reserved convention. Use Alt, not Ctrl: Omarchy
-binds Super + Ctrl + Z to zoom. Dual-label keyboard keys depend on the keyboard's
-hardware mode; verify which keys send Super and Alt.
+Check for conflicts before adding the binding. Zelport Integration does not
+change keyboard configuration automatically.
 
 ## Use
 
-The service table shows Domain, Source type, Data flow and State. Narrow panels
-stack these values. Data flow is display-only and comes from the gateway; older
-servers without the optional field show a dash.
+The service table shows Domain, Source type, Data flow, and State. Type a domain
+or source name, use Up/Down to select, Enter to open, and Escape to close. Click
+a row to open its validated URL. Administration opens the existing Zelport App
+web interface. Refresh requests an immediate poll.
 
-Type a domain or source name, use Up/Down to select, Enter to open, and Escape to
-close. Click a row to open it with the configured URL handler. Administration opens
-the existing gateway web interface. Refresh requests an immediate poll.
-
-Availability means the validated integration API responded, **not** that an
-application is healthy. Individual route and relay states retain Zelport's meaning.
-On failure the last list stays visible as stale and all launch actions are disabled.
-The endpoint hint is reread on each poll, including after a gateway restart.
-Search, selection by route ID, scroll position, and unchanged row objects survive
-refresh. The panel and widget share one service and one outstanding poll.
+Availability means the validated local integration API responded; it does not
+mean that an individual proxied application is healthy. On failure, the last
+verified list remains visible as stale and all launch actions are disabled. The
+endpoint hint is reread on each poll, including after a Zelport App restart.
+Search, selection by stable route ID, scroll position, and unchanged row objects
+survive refresh. The panel and widget share one service and one outstanding poll.
 
 Polling runs every five seconds while closed and two seconds while open, backing
-off failures to thirty seconds. Opening the panel requests an immediate refresh.
-Each helper process has a two-second total deadline and each HTTP attempt is
-limited to 900 ms. Responses are limited to 1 MiB and 4096 services. An invalid
-response never enables launch actions.
+off failures to thirty seconds. Each helper process has a two-second total
+deadline and each HTTP attempt is limited to 900 ms. Responses are limited to
+1 MiB and 4096 services. An invalid response never enables launch actions.
 
 ## Local API boundary
 
-The helper connects directly to IPv4 loopback with the exact localhost Host
-header. It ignores proxy environment variables and does not follow redirects.
-It validates product, API version and response structure. Launch URLs must use
-HTTP and the selected port, with `.localhost` service names or exact localhost
-for administration. QML opens validated URLs with `Qt.openUrlExternally`.
+The helper reads the last-used listener port from
+`$XDG_STATE_HOME/zelport/endpoint.json` or
+`~/.local/state/zelport/endpoint.json`. A missing or invalid hint selects port
+8080. A failed nondefault endpoint is followed by one attempt on port 8080.
+There is no token, port scan, process scan, instance selector, or runtime-directory
+dependency. Presentation preferences are documented in
+[Zelport Integration configuration](docs/CONFIGURATION.md).
 
-The API follows the existing local dashboard trust model. It is read-only but
-not isolated from other local users. Requests with Origin are rejected and no
-CORS access is granted. The plugin never changes gateway settings.
+Requests connect directly to IPv4 loopback with the exact localhost authority.
+The helper ignores proxy environment variables, does not follow redirects, and
+validates product, API version, and response structure. Launch URLs must use HTTP
+and the selected port with `.localhost` service names, or exact localhost for
+administration. QML opens validated URLs with `Qt.openUrlExternally`.
+
+The API follows the local dashboard trust model. It is read-only but does not
+isolate users on the same machine. Requests carrying `Origin` are rejected and
+CORS is not enabled. Zelport Integration never changes Zelport App settings.
 
 ## Update and remove
 
-Disable the plugin with `omarchy plugin disable zelport.integration` before replacing
-its installed files. Validate, rescan, and enable again. The manifest uses
-`keepLoaded`; service code changes require a shell restart under the v4.0.4
-lifecycle. For removal, disable it and use `omarchy plugin remove zelport.integration`.
-Removing Zelport Integration leaves Zelport, its configuration, routes, relay and sessions alone.
-An optional gateway user service is independently managed by its owner.
+Disable the integration before replacing its installed files:
+
+```sh
+omarchy plugin disable zelport.integration
+```
+
+Validate, rescan, and enable it again. The manifest uses `keepLoaded`, so service
+code changes require an Omarchy shell restart under the `v4.0.4` lifecycle. To
+remove the integration, disable it and run
+`omarchy plugin remove zelport.integration`. Removal leaves Zelport App, its
+configuration, services, relay state, and sessions unchanged.
 
 ## Development checks
 
-For desktop development, keep a separate checkout at
-`~/src/zelport-omarchy-dev` and link
-`~/.config/omarchy/plugins/zelport.integration` to it. Before replacing an
-existing installation, move it outside the plugin discovery directory, for
-example into `~/.local/share/zelport/plugin-backups/`. Preserve presentation
-preferences, keyboard bindings and the existing bar widget placement.
-
-Update the development checkout directly, run `omarchy plugin validate
-~/src/zelport-omarchy-dev`, then `omarchy restart shell` to reload service code.
-No gateway restart or release upgrade is needed. The panel header displays the
-manifest version. Development builds use a `-dev` suffix. Do not run the normal
-plugin updater against a checkout with unpublished edits.
-
-To roll back, remove only the plugin symlink, restore the backed-up directory
-at the original plugin path, and restart the shell.
+Run the Python suite on a host that permits controlled loopback fixtures. Run the
+JavaScript suite in an isolated Node.js environment, then build the deterministic
+bundle:
 
 ```sh
 python3 -m unittest discover -s tests -v
@@ -155,18 +127,16 @@ node --test tests/model.test.cjs
 python3 scripts/bundle.py
 ```
 
-Tests use temporary runtime directories and a controlled ephemeral loopback HTTP
-fixture. They do not inspect user descriptors or routes. The JavaScript tests exercise
-model behavior; they are not a native QML rendering test. The bundle script packages
-only an explicit runtime/documentation/test allowlist with deterministic metadata.
+The JavaScript suite exercises model behavior; it is not a native QML rendering
+test. The bundle script packages only an explicit runtime, documentation, and
+test allowlist with deterministic metadata. Complete the
+[native acceptance checklist](docs/NATIVE_ACCEPTANCE.md) on the target Omarchy
+desktop before release.
 
-The icon is copied from the existing Zelport identity kit; no separate identity is
-introduced. The UI uses Omarchy's live menu, font, spacing and bar theme tokens.
+The icon comes from the Zelport identity kit. The UI uses Omarchy's live menu,
+font, spacing, and bar theme tokens.
 
-Services whose Zelport module is absent from the build appear as `unsupported`.
-They remain visible but cannot be opened. This does not make Zelport unavailable
-or dim the bar icon. Preserved services become usable when the module returns.
-
-Omarchy catalog and release preparation: [publishing guide](docs/distribution/PUBLISHING.md).
+Release preparation is documented in the
+[publishing guide](docs/distribution/PUBLISHING.md).
 
 Licensed under the [MIT License](LICENSE).
