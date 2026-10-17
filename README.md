@@ -7,8 +7,7 @@ Zelport Integration connects the standard Omarchy bar and a keyboard search pane
 existing Zelport gateway. It never starts, stops, installs, or configures Zelport.
 Target: Omarchy **4.0.4-1** (upstream shell tag v4.0.4), Linux x86_64, Python 3.9+
 and Zelport 0.1.0-preview.5 or newer with the automatic local integration API.
-This is a preview. Earlier native loading checks are recorded in docs/NATIVE_RESULTS.md.
-Full visual and interaction acceptance remains pending;
+This is a preview. Full visual and interaction acceptance remains pending;
 see [the acceptance checklist](docs/NATIVE_ACCEPTANCE.md).
 
 ## Gateway installed with the Arch package
