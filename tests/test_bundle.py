@@ -22,7 +22,8 @@ class BundleTests(unittest.TestCase):
     def test_release_metadata_and_current_document_names(self):
         root = pathlib.Path(__file__).resolve().parents[1]
         manifest = json.loads((root / 'manifest.json').read_text())
-        self.assertEqual(manifest['version'], '0.10.0')
+        self.assertEqual(manifest['version'], '2026.10.0')
+        self.assertRegex(manifest['version'], r'^[0-9]{4}\.(0[1-9]|1[0-2])\.(0|[1-9][0-9]*)$')
         self.assertIn('docs/ZELPORT_SETUP.md', bundle.REQUIRED)
         old_setup = 'docs/' + ''.join(('GATE', 'WAY')) + '_SETUP.md'
         self.assertNotIn(old_setup, bundle.REQUIRED)

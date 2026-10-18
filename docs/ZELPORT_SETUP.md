@@ -1,6 +1,6 @@
 # Zelport App setup
 
-Zelport Integration `0.10.0` is a read-only Linux consumer of the local
+Zelport Integration `2026.10.0` is a read-only Linux consumer of the local
 integration API provided by Zelport App `0.10.0`. Install and start Zelport App
 separately. The integration does not install, start, stop, update, or configure
 the App.

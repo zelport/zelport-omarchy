@@ -3,6 +3,10 @@
 Read README.md before making changes. Write documentation, code comments,
 errors and UI text in English.
 
+Use `YYYY.MM.MICRO` for the manifest version and `vYYYY.MM.MICRO` for tags and
+releases. `MICRO` starts at `0` each month and increments for every additional
+release in that month. Zelport App versions remain independent and use SemVer.
+
 ## Commit messages
 
 Use [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
@@ -24,7 +28,7 @@ Examples:
 - `feat(homebrew): support user services`
 - `fix(relay): preserve client identities on reconnect`
 - `docs: clarify installation instructions`
-- `feat(integration): publish zelport 0.10.0`
+- `feat(integration): publish zelport 2026.10.0`
 
 Do not rewrite existing shared history merely to change commit message format.
 

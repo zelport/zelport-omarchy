@@ -1,7 +1,7 @@
 # Native acceptance — Omarchy 4.0.4-1
 
 Run this mandatory release checklist on the target Linux desktop with Zelport App
-and Zelport Integration `0.10.0`. A macOS unit-test or cross-build result does
+and Zelport Integration `2026.10.0`. A macOS unit-test or cross-build result does
 not count as QML/runtime acceptance. Use temporary schema-v1 configuration and
 synthetic services for route mutation checks.
 
