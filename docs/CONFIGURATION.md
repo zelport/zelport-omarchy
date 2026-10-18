@@ -1,10 +1,12 @@
 # Zelport Integration configuration
 
 Edit `$XDG_CONFIG_HOME/zelport/omarchy.json`, or
-`~/.config/zelport/omarchy.json` when `XDG_CONFIG_HOME` is unset. See
+`~/.config/zelport/omarchy.json` when `XDG_CONFIG_HOME` is unset or relative. See
 [config.example.json](../config.example.json) for the defaults. Zelport
 Integration reads this file at each poll, including Refresh, and never rewrites
-it. Optional sections and fields use defaults.
+it. The file itself is optional: when it does not exist, the integration uses
+the defaults in memory and does not create it. Optional sections and fields use
+defaults.
 
 `version: 1` is required when a file exists. Unknown fields, wrong types, other
 versions, and malformed JSON disable launching with a configuration error. This
@@ -18,11 +20,22 @@ no credentials belong in it, and it must be a regular file.
 | `panel.remember_selection` | `true` | Boolean |
 | `panel.clear_search_on_open` | `true` | Boolean |
 
+`version` identifies this configuration schema, not the integration or Zelport
+App version. Values in `services.source_types` are matched exactly against the
+source IDs returned by the integration API. A valid but unknown source ID simply
+matches no services.
+
 Sorting is ascending and textual, with domain and ID as stable tie-breakers.
 Source type sorting uses the displayed source name. State sorting is
 alphabetical, not a health ranking. Filtering does not alter Zelport App routes.
-Panel options apply when opening the panel, and selection follows stable route
-IDs across reconnects.
+
+When `panel.remember_selection` is `true`, reopening the panel keeps the
+selected service if its stable route ID is still present. When it is `false`,
+each open resets selection to the first visible service. When
+`panel.clear_search_on_open` is `true`, each open clears the search field; when
+it is `false`, reopening the panel retains the current search text. Selection
+and search text exist only in the running Omarchy shell: neither survives a
+shell restart, logout, or reboot, and neither is written to this file.
 
 ## Endpoint selection
 

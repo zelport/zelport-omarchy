@@ -1,18 +1,14 @@
 # Zelport Integration
 
-Zelport Integration is an independent community project and is not affiliated
-with or endorsed by Omarchy. Version `0.10.0` targets Omarchy **4.0.4-1**
-(upstream shell tag `v4.0.4`), Linux x86_64, Python 3.9+, and Zelport App
-`0.10.0`.
-
-The integration connects the standard Omarchy bar and a keyboard search panel
-to a running Zelport App through its read-only local integration API. It never
-installs, starts, stops, updates, or configures Zelport App.
+Zelport Integration brings Zelport services to the standard Omarchy bar and a
+keyboard-driven search panel. It connects to a running Zelport App through its
+read-only local integration API. It never installs, starts, stops, updates, or
+configures Zelport App.
 
 ## Requirements
 
-Install Zelport App `0.10.0` and start it as the logged-in user. The Arch package
-provides a user service:
+Install Zelport App and start it as the logged-in user. The Arch package provides
+a user service:
 
 ```sh
 systemctl --user status zelport.service
@@ -32,9 +28,8 @@ before replacing it and follow Omarchy's plugin management prompts. Preserve
 `~/.config/zelport/omarchy.json` and existing keyboard bindings. Do not create a
 second bar widget when Zelport Integration is already present.
 
-Omarchy `v4.0.4` accepts Git URLs rather than local archives. For an offline
-installation, inspect and extract the prepared source bundle, then copy its
-`zelport.integration` directory to
+For an offline installation, inspect and extract the prepared source bundle,
+then copy its `zelport.integration` directory to
 `~/.config/omarchy/plugins/zelport.integration/`. `manifest.json` must be
 directly inside that directory. Validate and enable the installed copy:
 
@@ -81,6 +76,40 @@ off failures to thirty seconds. Each helper process has a two-second total
 deadline and each HTTP attempt is limited to 900 ms. Responses are limited to
 1 MiB and 4096 services. An invalid response never enables launch actions.
 
+## Configuration
+
+Configuration is optional. When no configuration file exists, the integration
+uses the following defaults in memory and does not create a file:
+
+```json
+{
+  "version": 1,
+  "services": {
+    "source_types": [],
+    "sort_by": "domain"
+  },
+  "panel": {
+    "remember_selection": true,
+    "clear_search_on_open": true
+  }
+}
+```
+
+To customize these preferences, create
+`$XDG_CONFIG_HOME/zelport/omarchy.json`, or
+`~/.config/zelport/omarchy.json` when `XDG_CONFIG_HOME` is unset or relative.
+An empty `source_types` list shows all services; otherwise it contains the
+source IDs to show. `sort_by` accepts `domain`, `source_type`, or `state`.
+`remember_selection` preserves the selected service when the panel is reopened,
+while `clear_search_on_open` clears the search field on each open. Selection and
+search text are held only for the lifetime of the running Omarchy shell and are
+not written to disk. `version` identifies this configuration schema and must
+remain the integer `1`; it is not the integration or Zelport App version.
+
+The file is reread on every poll, including Refresh, and is never rewritten by
+the integration. See [Zelport Integration configuration](docs/CONFIGURATION.md)
+for accepted values, sorting details, and validation rules.
+
 ## Local API boundary
 
 The helper reads the last-used listener port from
@@ -101,19 +130,13 @@ The API follows the local dashboard trust model. It is read-only but does not
 isolate users on the same machine. Requests carrying `Origin` are rejected and
 CORS is not enabled. Zelport Integration never changes Zelport App settings.
 
-## Update and remove
-
-Disable the integration before replacing its installed files:
+## Remove
 
 ```sh
-omarchy plugin disable zelport.integration
+omarchy plugin remove zelport.integration
 ```
 
-Validate, rescan, and enable it again. The manifest uses `keepLoaded`, so service
-code changes require an Omarchy shell restart under the `v4.0.4` lifecycle. To
-remove the integration, disable it and run
-`omarchy plugin remove zelport.integration`. Removal leaves Zelport App, its
-configuration, services, relay state, and sessions unchanged.
+Removing the integration does not remove Zelport App or its configuration.
 
 ## Development checks
 
