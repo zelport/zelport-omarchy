@@ -27,6 +27,12 @@ class BundleTests(unittest.TestCase):
         old_setup = 'docs/' + ''.join(('GATE', 'WAY')) + '_SETUP.md'
         self.assertNotIn(old_setup, bundle.REQUIRED)
 
+    def test_systemd_example_uses_product_name(self):
+        root = pathlib.Path(__file__).resolve().parents[1]
+        unit = (root / 'docs' / 'zelport.service.example').read_text()
+        descriptions = [line for line in unit.splitlines() if line.startswith('Description=')]
+        self.assertEqual(descriptions, ['Description=Zelport App'])
+
     def test_active_product_text_has_no_retired_variants(self):
         root = pathlib.Path(__file__).resolve().parents[1]
         retired = (''.join(('gate', 'way')), ''.join(('pre', 'view')))
