@@ -54,6 +54,16 @@ alone does not require an Integration release.
 9. Tag the exact verified commit as `v2026.10.0`, create the GitHub release, and
    attach the exact verified `zelport-omarchy.tar.gz` plus its checksum file.
 
+Create the release from the pushed, verified tag with GitHub-generated notes:
+
+```sh
+tag=vYYYY.MM.MICRO
+gh release create "$tag" \
+  bin/zelport-omarchy.tar.gz bin/zelport-omarchy.tar.gz.sha256 \
+  --repo zelport/zelport-omarchy --verify-tag --generate-notes \
+  --title "Zelport Integration $tag"
+```
+
 Executed results belong to release verification and are not stored as a
 completed checklist in this repository. Any screenshot must use synthetic data
 and contain no private domains, endpoints, or settings.
