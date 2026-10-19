@@ -71,10 +71,10 @@ endpoint hint is reread on each poll, including after a Zelport App restart.
 Search, selection by stable route ID, scroll position, and unchanged row objects
 survive refresh. The panel and widget share one service and one outstanding poll.
 
-Polling runs every five seconds while closed and two seconds while open, backing
-off failures to thirty seconds. Each helper process has a two-second total
-deadline and each HTTP attempt is limited to 900 ms. Responses are limited to
-1 MiB and 4096 services. An invalid response never enables launch actions.
+Polling runs more frequently while the panel is open and backs off after
+failures. Helper processes, HTTP attempts, response sizes, and service counts
+have implementation-enforced bounds covered by the automated tests. An invalid
+response never enables launch actions.
 
 ## Configuration
 
