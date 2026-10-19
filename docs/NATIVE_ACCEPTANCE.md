@@ -1,9 +1,10 @@
 # Native acceptance — Omarchy 4.0.4-1
 
-Run this mandatory release checklist on the target Linux desktop with Zelport App
-and Zelport Integration `2026.10.0`. A macOS unit-test or cross-build result does
-not count as QML/runtime acceptance. Use temporary schema-v1 configuration and
-synthetic services for route mutation checks.
+Run this mandatory release checklist on the target Linux desktop with the
+latest stable Zelport App release and Zelport Integration `v2026.10.0`. A macOS
+unit-test or cross-build result does not count as QML/runtime acceptance. Use
+temporary schema-v1 configuration and synthetic services for route mutation
+checks.
 
 - [ ] `omarchy-version` reports the intended 4.0.4 series,
   `omarchy-shell shell ping` succeeds, and the standard `omarchy.bar` is active.
@@ -42,6 +43,7 @@ synthetic services for route mutation checks.
   nondefault port produces one attempt on 8080 and no scan of other ports.
 - [ ] A different application returning HTTP 200 is rejected as incompatible.
 
-Record Omarchy, Zelport App, and Zelport Integration versions, each result, and
-sanitized shell errors in release verification. Do not mark this checklist passed
-from manifest validation alone.
+Record the exact Omarchy version and canonical `v…` release identifiers for
+Zelport App and Zelport Integration, plus each result and sanitized shell errors,
+in release verification. Do not mark this checklist passed from manifest
+validation alone.

@@ -17,6 +17,10 @@ systemctl --user status zelport.service
 No integration flag or additional listener is required. See
 [Zelport setup](docs/ZELPORT_SETUP.md) for the API and lifecycle boundary.
 
+Zelport Integration and Zelport App release independently. The latest
+Integration is expected to work with the latest App through Integration API v1;
+an App release does not require a matching Integration version.
+
 ## Install from GitHub
 
 ```sh

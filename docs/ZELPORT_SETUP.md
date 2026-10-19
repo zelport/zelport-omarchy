@@ -1,9 +1,10 @@
 # Zelport App setup
 
-Zelport Integration `2026.10.0` is a read-only Linux consumer of the local
-integration API provided by Zelport App `0.10.0`. Install and start Zelport App
+Zelport Integration `v2026.10.0` is a read-only Linux consumer of Integration
+API v1 provided by the latest stable Zelport App. Install and start Zelport App
 separately. The integration does not install, start, stop, update, or configure
-the App.
+the App. Compatibility follows the API version rather than a matching App
+release number.
 
 The Arch package runs Zelport App as the logged-in user:
 

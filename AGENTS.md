@@ -3,9 +3,16 @@
 Read README.md before making changes. Write documentation, code comments,
 errors and UI text in English.
 
-Use `YYYY.MM.MICRO` for the manifest version and `vYYYY.MM.MICRO` for tags and
-releases. `MICRO` starts at `0` each month and increments for every additional
-release in that month. Zelport App versions remain independent and use SemVer.
+The canonical Integration release identifier is `vYYYY.MM.MICRO`. Use it in
+documentation, operator inputs, tags, GitHub Releases and reports. The manifest
+stores the derived `YYYY.MM.MICRO` payload because its format omits the prefix.
+`MICRO` starts at `0` each month and increments for every additional Integration
+release in that month.
+
+Zelport App releases remain independent and use canonical
+`vMAJOR.MINOR.PATCH`. The latest Integration follows the latest App through
+Integration API v1 compatibility; do not publish or pin a new Integration
+release solely because the App version changed.
 
 ## Commit messages
 
@@ -28,7 +35,7 @@ Examples:
 - `feat(homebrew): support user services`
 - `fix(relay): preserve client identities on reconnect`
 - `docs: clarify installation instructions`
-- `feat(integration): publish zelport 2026.10.0`
+- `feat(integration): publish zelport v2026.10.0`
 
 Do not rewrite existing shared history merely to change commit message format.
 
