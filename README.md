@@ -23,39 +23,18 @@ No integration flag or additional listener is required. See
 omarchy plugin add https://github.com/zelport/zelport-omarchy.git --enable
 ```
 
-If a hand-installed `zelport.integration` directory already exists, back it up
-before replacing it and follow Omarchy's plugin management prompts. Preserve
-`~/.config/zelport/omarchy.json` and existing keyboard bindings. Do not create a
-second bar widget when Zelport Integration is already present.
+If replacing a hand-installed copy, preserve
+`~/.config/zelport/omarchy.json`, keyboard bindings, and the existing bar widget.
 
-For an offline installation, inspect and extract the prepared source bundle,
-then copy its `zelport.integration` directory to
-`~/.config/omarchy/plugins/zelport.integration/`. `manifest.json` must be
-directly inside that directory. Validate and enable the installed copy:
-
-```sh
-omarchy plugin validate .
-omarchy-shell shell rescanPlugins
-omarchy plugin enable zelport.integration
-```
-
-Use Omarchy's bar configuration to add the **Zelport Integration** widget to the
-standard bar. The panel can also be opened directly:
+Add the **Zelport Integration** widget through Omarchy's bar configuration. Open
+the panel directly with:
 
 ```sh
 omarchy-shell shell toggle zelport.integration '{}'
 ```
 
-The optional **Super + Alt + Z** shortcut can be added to
-`~/.config/hypr/bindings.lua` on Omarchy installations that use Lua
-configuration:
-
-```lua
-o.bind("SUPER + ALT + Z", "Zelport Integration", "omarchy-shell shell toggle zelport.integration '{}'")
-```
-
-Check for conflicts before adding the binding. Zelport Integration does not
-change keyboard configuration automatically.
+See [installation details](docs/INSTALLATION.md) for offline setup and the
+optional keyboard shortcut.
 
 ## Use
 
@@ -64,17 +43,10 @@ or source name, use Up/Down to select, Enter to open, and Escape to close. Click
 a row to open its validated URL. Administration opens the existing Zelport App
 web interface. Refresh requests an immediate poll.
 
-Availability means the validated local integration API responded; it does not
-mean that an individual proxied application is healthy. On failure, the last
-verified list remains visible as stale and all launch actions are disabled. The
-endpoint hint is reread on each poll, including after a Zelport App restart.
-Search, selection by stable route ID, scroll position, and unchanged row objects
-survive refresh. The panel and widget share one service and one outstanding poll.
-
-Polling runs more frequently while the panel is open and backs off after
-failures. Helper processes, HTTP attempts, response sizes, and service counts
-have implementation-enforced bounds covered by the automated tests. An invalid
-response never enables launch actions.
+Availability confirms the local API, not individual application health. On
+failure, the last verified list remains visible as stale and launch actions are
+disabled. Refreshes preserve search and selection; polling backs off after
+failures.
 
 ## Configuration
 
@@ -95,40 +67,19 @@ uses the following defaults in memory and does not create a file:
 }
 ```
 
-To customize these preferences, create
-`$XDG_CONFIG_HOME/zelport/omarchy.json`, or
+To customize it, create `$XDG_CONFIG_HOME/zelport/omarchy.json`, or
 `~/.config/zelport/omarchy.json` when `XDG_CONFIG_HOME` is unset or relative.
-An empty `source_types` list shows all services; otherwise it contains the
-source IDs to show. `sort_by` accepts `domain`, `source_type`, or `state`.
-`remember_selection` preserves the selected service when the panel is reopened,
-while `clear_search_on_open` clears the search field on each open. Selection and
-search text are held only for the lifetime of the running Omarchy shell and are
-not written to disk. `version` identifies this configuration schema and must
-remain the integer `1`; it is not the integration or Zelport App version.
-
-The file is reread on every poll, including Refresh, and is never rewritten by
-the integration. See [Zelport Integration configuration](docs/CONFIGURATION.md)
-for accepted values, sorting details, and validation rules.
+The integration rereads but never rewrites the file. See
+[configuration](docs/CONFIGURATION.md) for field semantics and validation.
 
 ## Local API boundary
 
-The helper reads the last-used listener port from
-`$XDG_STATE_HOME/zelport/endpoint.json` or
-`~/.local/state/zelport/endpoint.json`. A missing or invalid hint selects port
-8080. A failed nondefault endpoint is followed by one attempt on port 8080.
-There is no token, port scan, process scan, instance selector, or runtime-directory
-dependency. Presentation preferences are documented in
-[Zelport Integration configuration](docs/CONFIGURATION.md).
-
-Requests connect directly to IPv4 loopback with the exact localhost authority.
-The helper ignores proxy environment variables, does not follow redirects, and
-validates product, API version, and response structure. Launch URLs must use HTTP
-and the selected port with `.localhost` service names, or exact localhost for
-administration. QML opens validated URLs with `Qt.openUrlExternally`.
-
-The API follows the local dashboard trust model. It is read-only but does not
-isolate users on the same machine. Requests carrying `Origin` are rejected and
-CORS is not enabled. Zelport Integration never changes Zelport App settings.
+The helper reads the listener from `$XDG_STATE_HOME/zelport/endpoint.json` (or
+`~/.local/state/zelport/endpoint.json`) and falls back to port 8080. It connects
+directly to IPv4 loopback, validates responses and launch URLs, and performs no
+port or process scan. The read-only API follows the local dashboard trust model
+and does not isolate users on the same machine. See
+[Zelport setup](docs/ZELPORT_SETUP.md) for the complete boundary.
 
 ## Remove
 
@@ -150,16 +101,8 @@ node --test tests/model.test.cjs
 python3 scripts/bundle.py
 ```
 
-The JavaScript suite exercises model behavior; it is not a native QML rendering
-test. The bundle script packages only an explicit runtime, documentation, and
-test allowlist with deterministic metadata. Complete the
-[native acceptance checklist](docs/NATIVE_ACCEPTANCE.md) on the target Omarchy
-desktop before release.
-
-The icon comes from the Zelport identity kit. The UI uses Omarchy's live menu,
-font, spacing, and bar theme tokens.
-
-Release preparation is documented in the
+Before release, complete the
+[native acceptance checklist](docs/NATIVE_ACCEPTANCE.md) and follow the
 [publishing guide](docs/distribution/PUBLISHING.md).
 
 Licensed under the [MIT License](LICENSE).
